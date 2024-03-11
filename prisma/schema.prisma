@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model categories {
+  category_id    Int              @id @default(autoincrement())
+  category       String           @unique @db.VarChar(100)
+  games_category games_category[]
+}
+
+model consoles {
+  console_id Int     @id @default(autoincrement())
+  console    String  @unique @db.VarChar(20)
+  games      games[]
+}
+
+model fqa {
+  fqa_id     Int    @id @default(autoincrement())
+  fqa_title  String @db.VarChar(50)
+  fqa_answer String
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model games {
+  game_id        Int              @id @default(autoincrement())
+  game_name      String           @unique @db.VarChar(100)
+  console_id     Int?
+  game_banner    Bytes?
+  game_score     Int?             @default(0)
+  consoles       consoles?        @relation(fields: [console_id], references: [console_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_consoles")
+  games_category games_category[]
+  games_info     games_info[]
+  user_score     user_score[]
+}
+
+model games_category {
+  game_category_id Int         @id @default(autoincrement())
+  game_id          Int?
+  category_id      Int?
+  categories       categories? @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction)
+  games            games?      @relation(fields: [game_id], references: [game_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model games_info {
+  info_id                Int     @id @default(autoincrement())
+  game_id                Int
+  game_sinopsis          String
+  game_features_specific String?
+  game_features_general  String?
+  game_fpage             Bytes?
+  games                  games   @relation(fields: [game_id], references: [game_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model user_question {
+  question_id   Int    @id @default(autoincrement())
+  user_id       Int
+  question_info String
+  users         users  @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_score {
+  score_id Int   @id @default(autoincrement())
+  user_id  Int
+  game_id  Int
+  score    Int?
+  games    games @relation(fields: [game_id], references: [game_id], onDelete: NoAction, onUpdate: NoAction)
+  users    users @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model users {
+  user_id       Int             @id @default(autoincrement())
+  user_name     String          @db.VarChar(50)
+  user_email    String          @unique @db.VarChar(100)
+  user_password String          @db.VarChar(50)
+  user_admin    Int             @default(0)
+  user_question user_question[]
+  user_score    user_score[]
+}
