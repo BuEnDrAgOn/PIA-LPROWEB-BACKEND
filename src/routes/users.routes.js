@@ -3,9 +3,9 @@ import { create, read, update, deleteUser } from "../controllers/users.controlle
 
 const router = Router()
 
-router.post('/users', create)
-router.get('/users', read)
-router.put('/users', update)
-router.delete('/users', deleteUser)
+router.post('/', create)
+router.get('/', read)
+router.put('/', update)
+router.delete('/', deleteUser)
 
 export default router

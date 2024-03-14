@@ -3,9 +3,9 @@ import { create, read, update, deleteGames } from "../controllers/games.controll
 
 const router = Router()
 
-router.post('/games', create)
-router.get('/games', read)
-router.put('/games', update)
-router.delete('/games', deleteCategory)
+router.post('/', create)
+router.get('/', read)
+router.put('/', update)
+router.delete('/', deleteGames)
 
 export default router

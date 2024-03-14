@@ -3,9 +3,9 @@ import { create, read, update, deleteFQA } from "../controllers/fqa.controller.j
 
 const router = Router()
 
-router.post('/fqa', create)
-router.get('/fqa', read)
-router.put('/fqa', update)
-router.delete('/fqa', deleteFQA)
+router.post('/', create)
+router.get('/', read)
+router.put('/', update)
+router.delete('/', deleteFQA)
 
 export default router

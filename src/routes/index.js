@@ -13,3 +13,5 @@ router.use('/consoles', consoles)
 router.use('/fqa', fqa)
 router.use('/games', games)
 router.use('/users', users)
+
+export default router

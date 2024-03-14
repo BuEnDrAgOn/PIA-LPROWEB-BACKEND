@@ -3,9 +3,9 @@ import { create, read, update, deleteCategory } from "../controllers/categories.
 
 const router = Router()
 
-router.post('/categories', create)
-router.get('/categories', read)
-router.put('/categories', update)
-router.delete('/categories', deleteCategory)
+router.post('/', create);
+router.get('/', read);
+router.put('/', update);
+router.delete('/', deleteCategory);
 
 export default router
