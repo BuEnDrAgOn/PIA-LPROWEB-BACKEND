@@ -46,6 +46,9 @@ export const read = async(req, res) => {
                         }
                     }
                 }
+            },
+            orderBy:{
+                game_score: 'desc'
             }
         })
         res.json(games)
