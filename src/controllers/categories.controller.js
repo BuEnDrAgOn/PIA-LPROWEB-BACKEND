@@ -1,8 +1,8 @@
-import client from '../client.js'
+import prisma from '../prisma.js'
 
 export const create = async(req, res) =>{
     try{
-        const category = await client.categories.create({
+        const category = await prisma.categories.create({
              data: {
                  category: 'Aventura'
              }
@@ -23,7 +23,7 @@ export const update = async(req, res) => {
 }
 
 export const deleteCategory = async(req, res) => {
-    const category = await client.categories.delete({
+    const category = await prisma.categories.delete({
         where: {
             category: 'Aventura'
         }

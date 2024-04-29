@@ -1,4 +1,4 @@
-import client from '../client.js'
+import prisma from '../prisma.js'
 
 export const create = async(req, res) =>{
     console.log('hola')
