@@ -28,7 +28,7 @@ export const create = async(req, res) =>{
 }
 
 export const read = async(req, res) => {
-    const {consoleName, categoryId} = req.params
+    const {consoleName, categoryName} = req.params
     try{
         const games = await prisma.games.findMany({
             where:{
@@ -41,7 +41,9 @@ export const read = async(req, res) => {
                 },
                 games_category: {
                     some:{
-                        category_id: +categoryId
+                        categories:{
+                            category: categoryName
+                        }
                     }
                 }
             }
