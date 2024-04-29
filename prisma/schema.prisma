@@ -25,10 +25,12 @@ model consoles {
 
 model fqa {
   fqa_id     Int      @id @default(autoincrement())
+  fqa_user   Int
   fqa_title  String   @db.VarChar(50)
   fqa_answer String
   created_at DateTime @default(now()) @db.Timestamp(6)
   updated_at DateTime @default(now()) @db.Timestamp(6)
+  users      users    @relation(fields: [fqa_user], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -41,23 +43,23 @@ model games {
   updated_at     DateTime         @default(now()) @db.Timestamp(6)
   games_category games_category[]
   games_console  games_console[]
-  games_info     games_info[]
+  games_info     games_info?
   user_score     user_score[]
 }
 
 model games_category {
-  game_category_id Int         @id @default(autoincrement())
-  game_id          Int?
-  category_id      Int?
-  created_at       DateTime    @default(now()) @db.Timestamp(6)
-  updated_at       DateTime    @default(now()) @db.Timestamp(6)
-  categories       categories? @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction)
-  games            games?      @relation(fields: [game_id], references: [game_id], onDelete: NoAction, onUpdate: NoAction)
+  game_id     Int
+  category_id Int
+  created_at  DateTime   @default(now()) @db.Timestamp(6)
+  updated_at  DateTime   @default(now()) @db.Timestamp(6)
+  categories  categories @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction)
+  games       games      @relation(fields: [game_id], references: [game_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([game_id, category_id])
 }
 
 model games_info {
-  info_id                Int      @id @default(autoincrement())
-  game_id                Int
+  game_id                Int      @id
   game_sinopsis          String
   game_features_specific String?
   game_features_general  String?
@@ -77,7 +79,6 @@ model user_question {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model user_score {
-  score_id   Int      @id @default(autoincrement())
   user_id    Int
   game_id    Int
   created_at DateTime @default(now()) @db.Timestamp(6)
@@ -85,6 +86,8 @@ model user_score {
   score      Int?
   games      games    @relation(fields: [game_id], references: [game_id], onDelete: NoAction, onUpdate: NoAction)
   users      users    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, game_id])
 }
 
 model users {
@@ -92,19 +95,30 @@ model users {
   user_name     String          @db.VarChar(50)
   user_email    String          @unique @db.VarChar(100)
   user_password String          @db.VarChar(50)
-  user_admin    Int             @default(0)
+  user_role     Int
+  user_token    Int?
   created_at    DateTime        @default(now()) @db.Timestamp(6)
   updated_at    DateTime        @default(now()) @db.Timestamp(6)
+  fqa           fqa[]
   user_question user_question[]
   user_score    user_score[]
+  roles         roles           @relation(fields: [user_role], references: [roles_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model games_console {
-  game_console_id Int       @id @default(autoincrement())
-  game_id         Int?
-  console_id      Int?
-  created_at      DateTime  @default(now()) @db.Timestamp(6)
-  updated_at      DateTime  @default(now()) @db.Timestamp(6)
-  consoles        consoles? @relation(fields: [console_id], references: [console_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_consoles")
-  games           games?    @relation(fields: [game_id], references: [game_id], onDelete: NoAction, onUpdate: NoAction)
+  game_id    Int
+  console_id Int
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  consoles   consoles @relation(fields: [console_id], references: [console_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_consoles")
+  games      games    @relation(fields: [game_id], references: [game_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([game_id, console_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model roles {
+  roles_id  Int     @id @default(autoincrement())
+  role_name String  @unique @db.VarChar(15)
+  users     users[]
 }

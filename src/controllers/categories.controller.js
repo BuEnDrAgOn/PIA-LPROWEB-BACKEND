@@ -1,12 +1,17 @@
 import client from '../client.js'
 
 export const create = async(req, res) =>{
-   const category = await client.categories.create({
-        data: {
-            category: 'Aventura'
-        }
-    })
-    res.json(category)
+    try{
+        const category = await client.categories.create({
+             data: {
+                 category: 'Aventura'
+             }
+         })
+         res.json(category)
+    }
+   catch(e){
+    console.log(e)
+   }
 }
 
 export const read = async(req, res) => {
