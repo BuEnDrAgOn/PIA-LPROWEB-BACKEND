@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { create, read, update, deleteGames } from "../controllers/games.controller.js"
+import { create, read, readAll, update, deleteGames } from "../controllers/games.controller.js"
 
 const router = Router()
 
 router.post('/', create)
-router.get('/', read)
+router.get('/', readAll)
+router.get('/:consoleName/:categoryId', read)
 router.put('/', update)
 router.delete('/', deleteGames)
 

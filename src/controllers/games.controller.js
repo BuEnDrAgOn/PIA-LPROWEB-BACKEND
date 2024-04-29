@@ -28,6 +28,31 @@ export const create = async(req, res) =>{
 }
 
 export const read = async(req, res) => {
+    const {consoleName, categoryId} = req.params
+    try{
+        const games = await prisma.games.findMany({
+            where:{
+                games_console:{
+                    some:{
+                        consoles:{
+                            console: consoleName
+                        }
+                    }
+                },
+                games_category: {
+                    some:{
+                        category_id: +categoryId
+                    }
+                }
+            }
+        })
+        res.json(games)
+    } catch(e){
+        console.log(e)
+    }
+}
+
+export const readAll = async(req, res) => {
     try{
         const games = await prisma.games.findMany({
             select:{
