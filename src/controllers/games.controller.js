@@ -10,7 +10,7 @@ export const create = async(req, res) =>{
                 game_name: gameName,
                 games_console:{
                     createMany:{
-                        data:[{console_id: consoleID[0]}, {console_id: consoleID[1]}]
+                        data:[{console_id: consoleID[0]}]
                     }
                 },
                 games_category:{
@@ -28,6 +28,50 @@ export const create = async(req, res) =>{
 }
 
 export const read = async(req, res) => {
+    const {gameName} = req.params
+    try {
+        const game = await prisma.games.findUnique({
+            where: {
+                game_name: gameName
+            },
+            select:{
+                game_name: true,
+                game_score: true,
+                games_console:{
+                    select:{
+                        consoles:{
+                            select:{
+                                console: true
+                            }
+                        }
+                    }
+                },
+                games_category:{
+                    select:{
+                        categories:{
+                            select:{
+                                category: true
+                            }
+                        }
+                    }
+                },
+                games_info:{
+                    select:{
+                        game_features_general: true,
+                        game_features_specific: true,
+                        game_sinopsis: true,
+                        game_fpage: true
+                    }
+                }
+            }
+        })
+        res.json(game)
+    } catch(e) {
+        console.log(e)
+    }
+}
+
+export const readGameList = async(req, res) => {
     const {consoleName, categoryName} = req.params
     try{
         const games = await prisma.games.findMany({
@@ -93,5 +137,14 @@ export const update = async(req, res) => {
 }
 
 export const deleteGames = async(req, res) => {
-    console.log('Hola')
+    try{
+        const game = await prisma.games.delete({
+            where:{
+                game_name: 'Halo 5'
+            }
+        })
+        res.json(game)
+    } catch(e){
+        console.log(e)
+    }
 }
