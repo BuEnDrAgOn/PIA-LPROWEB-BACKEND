@@ -1,9 +1,9 @@
 import prisma from '../prisma.js'
 
+// Create
 export const create = async(req, res) =>{
-    const {gameName} = req.body
-    const {consoleID} = req.body
-    const {categoryID} = req.body
+    const {gameName, consoleID, categoryID} = req.body
+
     try{
         const game = await prisma.games.create({
             data:{
@@ -27,6 +27,25 @@ export const create = async(req, res) =>{
     }
 }
 
+export const createGameInfo = async(req, res) => {
+    const {gameID} = req.params
+    const {sinopsys, general, specific} = req.body
+    try{
+        const gameInfo = await prisma.games_info.create({
+            data:{
+                game_id: parseInt(gameID),
+                game_sinopsis: sinopsys,
+                game_features_general: general,
+                game_features_specific: specific,
+            }
+        })
+        res.json(gameInfo)
+    } catch(e){
+        console.log(e)
+    }
+}
+
+// Read
 export const read = async(req, res) => {
     const {gameName} = req.params
     try {
@@ -36,6 +55,7 @@ export const read = async(req, res) => {
             },
             select:{
                 game_name: true,
+                game_id: true,
                 game_score: true,
                 games_console:{
                     select:{
@@ -106,6 +126,7 @@ export const readAll = async(req, res) => {
         const games = await prisma.games.findMany({
             select:{
                 game_name: true,
+                game_id: true,
                 games_category:{
                     select:{
                         categories:{
@@ -132,10 +153,11 @@ export const readAll = async(req, res) => {
     }
 }
 
+// Update
 export const update = async(req, res) => {
-    console.log('Hola')
 }
 
+// Delete
 export const deleteGames = async(req, res) => {
     try{
         const game = await prisma.games.delete({
