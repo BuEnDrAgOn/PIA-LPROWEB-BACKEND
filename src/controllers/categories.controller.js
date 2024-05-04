@@ -1,10 +1,11 @@
 import prisma from '../prisma.js'
 
 export const create = async(req, res) =>{
+    const {categoryName} = req.body
     try{
         const category = await prisma.categories.create({
              data: {
-                 category: 'Aventura'
+                 category: categoryName
              }
          })
          res.json(category)
@@ -13,9 +14,17 @@ export const create = async(req, res) =>{
     console.log(e)
    }
 }
-
 export const read = async(req, res) => {
-    console.log('Hola')
+    'hola'
+}
+
+export const readAll = async(req, res) => {
+    try{
+        const categories = await prisma.categories.findMany()
+        res.json(categories)
+    } catch(e){
+        console.log(e)
+    }
 }
 
 export const update = async(req, res) => {
