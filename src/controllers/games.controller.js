@@ -10,7 +10,7 @@ export const create = async(req, res) =>{
                 game_name: gameName,
                 games_console:{
                     createMany:{
-                        data:[{console_id: consoleID[0]}]
+                        data:[{console_id: consoleID[0]}, {console_id: consoleID[1]}]
                     }
                 },
                 games_category:{
@@ -124,27 +124,12 @@ export const readGameList = async(req, res) => {
 export const readAll = async(req, res) => {
     try{
         const games = await prisma.games.findMany({
-            select:{
-                game_name: true,
-                game_id: true,
-                games_category:{
-                    select:{
-                        categories:{
-                            select:{
-                                category: true
-                            }
-                        }
-                    }
-                },
-                games_console:{
-                    select:{
-                        consoles:{
-                            select:{
-                                console: true
-                            }
-                        }
-                    }
-                }
+            include:{
+                games_console: true,
+                games_category: true
+            },
+            orderBy:{
+                game_name: 'desc'
             }
         })
         res.json(games)
@@ -154,15 +139,89 @@ export const readAll = async(req, res) => {
 }
 
 // Update
-export const update = async(req, res) => {
+
+// Controlador para actualizar un juego
+export async function updateGame(req, res) {
+    const gameId = req.params.gameId;
+    const updatedGame = req.body;
+
+    try {
+        // Actualizar el juego en la tabla games
+        await prisma.games.update({
+            where: { game_id: +gameId },
+            data: {
+                game_name: updatedGame.game_name,
+                game_banner: updatedGame.game_banner
+            }
+        });
+
+        // Obtener las consolas actuales asociadas con el juego
+        const currentConsoles = await prisma.games_console.findMany({
+            where: { game_id: +gameId }
+        });
+
+        // Comparar las consolas actualizadas con las actuales
+        const consolesToAdd = updatedGame.games_console.filter(console => !currentConsoles.some(c => c.console_id === console.console_id));
+        const consolesToRemove = currentConsoles.filter(console => !updatedGame.games_console.some(c => c.console_id === console.console_id));
+
+        // Agregar consolas nuevas a la tabla games_console
+        await prisma.games_console.createMany({
+            data: consolesToAdd.map(console => ({
+                game_id: +gameId,
+                console_id: console.console_id
+            }))
+        });
+
+        // Eliminar consolas que ya no están asociadas con el juego
+        await prisma.games_console.deleteMany({
+            where: {
+                game_id: +gameId,
+                console_id: {
+                    in: consolesToRemove.map(console => console.console_id)
+                }
+            }
+        });
+
+        // Categorías
+
+        const currentCategories = await prisma.games_category.findMany({
+            where: { game_id: +gameId}
+        });
+
+        const categoriesToAdd = updatedGame.games_category.filter(category => !currentCategories.some(c => c.category_id === category.category_id))
+        const categoriesToRemove = currentCategories.filter(category => !updatedGame.games_category.some(c => c.category_id === category.category_id))
+
+        await prisma.games_category.createMany({
+            data: categoriesToAdd.map(category => ({
+                game_id: +gameId,
+                category_id: category.category_id
+            }))
+        })
+
+        await prisma.games_category.deleteMany({
+            where:{
+                game_id: +gameId,
+                category_id: {
+                    in: categoriesToRemove.map(category => category.category_id)
+                }
+            }
+        })
+
+        res.status(200).json({ message: "Juego actualizado exitosamente" });
+    } catch (error) {
+        console.error("Error al actualizar el juego:", error);
+        res.status(500).json({ message: "Error al actualizar el juego" });
+    }
 }
+
 
 // Delete
 export const deleteGames = async(req, res) => {
+    const {gameId} = req.params
     try{
         const game = await prisma.games.delete({
             where:{
-                game_name: 'Halo 5'
+                game_id: +gameId
             }
         })
         res.json(game)
