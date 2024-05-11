@@ -3,20 +3,26 @@ import prisma from '../prisma.js'
 // Create
 export const create = async(req, res) =>{
     const newGame = req.body
+    newGame.games_console.forEach(console => {
+        delete console.game_id
+    })
+    newGame.games_category.forEach(category => {
+        delete category.game_id
+    })
 
     try{
         const game = await prisma.games.create({
             data:{
                 game_name: newGame.game_name,
                 games_console:{
-                    createMany:{
-                        data: newGame.games_console
-                    }
+                    create:
+                        newGame.games_console
+                
                 },
                 games_category:{
-                    createMany:{
-                        data: newGame.games_category
-                    }
+                    create:
+                        newGame.games_category
+                    
                 }
             }
             
