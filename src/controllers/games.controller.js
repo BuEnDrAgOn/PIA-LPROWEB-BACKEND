@@ -2,21 +2,21 @@ import prisma from '../prisma.js'
 
 // Create
 export const create = async(req, res) =>{
-    const {gameName, consoleID, categoryID} = req.body
+    const newGame = req.body
 
     try{
         const game = await prisma.games.create({
             data:{
-                game_name: gameName,
+                game_name: newGame.game_name,
                 games_console:{
                     createMany:{
-                        data:[{console_id: consoleID[0]}, {console_id: consoleID[1]}]
+                        data: newGame.games_console
                     }
                 },
                 games_category:{
-                    create:[{
-                        category_id: 1
-                    }]
+                    createMany:{
+                        data: newGame.games_category
+                    }
                 }
             }
             
@@ -151,7 +151,7 @@ export async function updateGame(req, res) {
             where: { game_id: +gameId },
             data: {
                 game_name: updatedGame.game_name,
-                game_banner: updatedGame.game_banner
+                game_banner: updatedGame.game_banner,
             }
         });
 
