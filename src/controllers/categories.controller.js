@@ -1,7 +1,7 @@
 import prisma from '../prisma.js'
 
 export const create = async(req, res) =>{
-    const {categoryName} = req.body
+    const categoryName = req.body.category
     try{
         const category = await prisma.categories.create({
              data: {
@@ -14,9 +14,6 @@ export const create = async(req, res) =>{
     console.log(e)
    }
 }
-export const read = async(req, res) => {
-    'hola'
-}
 
 export const readAll = async(req, res) => {
     try{
@@ -28,14 +25,34 @@ export const readAll = async(req, res) => {
 }
 
 export const update = async(req, res) => {
-    console.log('Hola')
+    const {categoryId} = req.params
+    const categoryItem = req.body
+
+    try{
+        const categoryUpdated = await prisma.categories.update({
+            where:{
+                category_id: +categoryId
+            },
+            data:{
+                category: categoryItem.category
+            }
+        })
+        res.json(categoryUpdated)
+    } catch(e){
+        console.log(e)
+    }
 }
 
 export const deleteCategory = async(req, res) => {
-    const category = await prisma.categories.delete({
-        where: {
-            category: 'Aventura'
-        }
-    })
-    res.json(category)
+    let {categoryId} = req.params
+    try{
+        const category = await prisma.categories.delete({
+            where: {
+                category_id: +categoryId
+            }
+        })
+        res.json(category)
+    } catch(e){
+        console.log(e)
+    }
 }

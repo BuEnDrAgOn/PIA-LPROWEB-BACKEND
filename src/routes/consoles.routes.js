@@ -5,7 +5,7 @@ const router = Router()
 
 router.post('/', create)
 router.get('/', read)
-router.put('/', update)
-router.delete('/', deleteConsoles)
+router.patch('/:consoleId', update)
+router.delete('/:consoleId', deleteConsoles)
 
 export default router
