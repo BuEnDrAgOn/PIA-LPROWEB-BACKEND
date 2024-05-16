@@ -220,6 +220,45 @@ export async function updateGame(req, res) {
     }
 }
 
+export const createOrUpdateGameInfo = async (req, res) => {
+    const {gameId} = req.params
+    const info = req.body
+
+    try{
+        const existingRecord = await prisma.games_info.findUnique({
+            where:{
+                game_id: +gameId
+            }
+        })
+
+        if(existingRecord){
+            await prisma.games_info.update({
+                where:{
+                    game_id: +gameId
+                },
+                data:{
+                    game_sinopsis: info.game_sinopsis,
+                    game_features_general: info.game_features_general,
+                    game_features_specific: info.game_features_specific
+                }
+            })
+        } else{
+            await prisma.games_info.create({
+                data:{
+                    game_id: +gameId,
+                    game_sinopsis: info.game_sinopsis,
+                    game_features_general: info.game_features_general,
+                    game_features_specific: info.game_features_specific
+                }
+            })
+        }
+
+        res.json('Se ha actualizado satisfactoriamente')
+    } catch(e) {
+        console.log(e)
+    }
+}
+
 
 // Delete
 export const deleteGames = async(req, res) => {
