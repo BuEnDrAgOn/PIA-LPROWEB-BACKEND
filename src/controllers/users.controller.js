@@ -25,8 +25,10 @@ export const read = async(req, res) => {
                 user_email: user.user_email,
                 user_password: user.user_password
             },
-
-            include:{
+            select:{
+                user_email: true,
+                user_name: true,
+                user_password: true,
                 roles:{
                     select:{
                         role_name: true
