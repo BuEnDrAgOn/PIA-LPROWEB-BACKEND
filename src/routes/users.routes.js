@@ -4,7 +4,7 @@ import { create, read, update, deleteUser } from "../controllers/users.controlle
 const router = Router()
 
 router.post('/', create)
-router.get('/', read)
+router.post('/read/', read)
 router.put('/', update)
 router.delete('/', deleteUser)
 
