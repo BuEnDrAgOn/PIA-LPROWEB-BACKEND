@@ -97,6 +97,7 @@ export const updateUserScore = async (req, res) => {
 
 export const readScoresGame = async (req, res) =>{
     const {gameId} = req.params
+    
     try{
         const scores = await prisma.user_score.findMany({
             where:{
@@ -105,6 +106,7 @@ export const readScoresGame = async (req, res) =>{
         })
 
         res.json(scores)
+        
     }catch(e){
         console.log(e)
     }
