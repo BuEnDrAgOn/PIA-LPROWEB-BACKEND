@@ -26,6 +26,7 @@ export const read = async(req, res) => {
                 user_password: user.user_password
             },
             select:{
+                user_id: true,
                 user_email: true,
                 user_name: true,
                 user_password: true,
@@ -37,8 +38,13 @@ export const read = async(req, res) => {
             }
         })
 
-        const token = jwt.sign({...logIn}, 'LabPwebPIA')
-        res.json(token)
+        if(!logIn){
+            res.status(404).json({message: 'Credenciales incorrectas'})
+        } else{
+            const token = jwt.sign({...logIn}, 'LabPwebPIA')
+            res.status(200).json(token)
+        }
+        
     }catch(e){
         console.log(e)
     }
