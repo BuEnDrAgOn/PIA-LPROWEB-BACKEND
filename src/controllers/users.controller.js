@@ -66,16 +66,20 @@ export const updateUserScore = async (req, res) => {
     try{
         const existingRecord = await prisma.user_score.findUnique({
             where:{
-                user_id: userScore.user_id,
-                game_id: userScore.game_id
+                user_id_game_id:{
+                    user_id: userScore.user_id,
+                    game_id: userScore.game_id
+                }
             }
         })
         
         if(existingRecord){
             await prisma.user_score.update({
                 where:{
-                    user_id: userScore.user_id,
-                    game_id: userScore.game_id
+                    user_id_game_id:{
+                        user_id: userScore.user_id,
+                        game_id: userScore.game_id
+                    }
                 },
                 data:{
                     score: userScore.score
@@ -90,18 +94,24 @@ export const updateUserScore = async (req, res) => {
                 }
             })
         }
+
+        res.json('Se actualizó exitosamente')
     }catch(e){
         console.log(e)
     }
 }
 
-export const readScoresGame = async (req, res) =>{
-    const {gameId} = req.params
+export const userGameScore = async (req, res) =>{
+    const {gameId} = req.query
+    const {userId} = req.query
     
     try{
-        const scores = await prisma.user_score.findMany({
+        const scores = await prisma.user_score.findUnique({
             where:{
-                game_id: +gameId
+                user_id_game_id:{
+                    game_id: +gameId,
+                    user_id: +userId
+                }
             }
         })
 
