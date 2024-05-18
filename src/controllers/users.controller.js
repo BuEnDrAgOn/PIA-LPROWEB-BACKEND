@@ -13,7 +13,9 @@ export const create = async(req, res) =>{
         })
         res.json(user)
     } catch(e){
-        console.log(e)
+        if(e.code === 'P2002' && e.meta.target.includes('user_email')){
+            res.status(409).json({message:'Error: correo ya existente'})
+        }
     }
 }
 
