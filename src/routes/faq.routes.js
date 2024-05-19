@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { create, read, update, deleteFQA } from "../controllers/fqa.controller.js"
+import { create, index, show, update, deleteFQA } from "../controllers/fqa.controller.js"
 
 const router = Router()
 
 router.post('/', create)
-router.get('/', read)
+router.get('/', index)
+router.get('/:id', show)
 router.put('/', update)
 router.delete('/', deleteFQA)
 
