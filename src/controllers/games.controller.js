@@ -150,6 +150,20 @@ export const readAll = async(req, res) => {
     }
 }
 
+export const readTopTen = async (req, res) => {
+    try{
+        const games = await prisma.games.findMany({
+            orderBy:{
+                game_score: 'desc'
+            },
+            take: 10
+        })
+        res.json(games)
+    } catch(e){
+        console.log(e)
+    }
+}
+
 // Update
 
 // Controlador para actualizar un juego
