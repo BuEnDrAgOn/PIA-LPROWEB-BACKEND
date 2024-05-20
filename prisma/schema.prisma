@@ -60,7 +60,7 @@ model games_category {
 
 model games_info {
   game_id                Int      @id
-  game_sinopsis          String
+  game_sinopsis          String?
   game_features_specific String?
   game_features_general  String?
   game_fpage             String?  @default("https://placehold.jp/250x250.png")

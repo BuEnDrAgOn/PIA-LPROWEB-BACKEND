@@ -23,6 +23,11 @@ export const create = async(req, res) =>{
                     create:
                         newGame.games_category
                     
+                },
+                games_info:{
+                    create:{
+                        game_fpage: newGame.games_info.game_fpage
+                    }
                 }
             }
             
@@ -132,7 +137,8 @@ export const readAll = async(req, res) => {
         const games = await prisma.games.findMany({
             include:{
                 games_console: true,
-                games_category: true
+                games_category: true,
+                games_info: true
             },
             orderBy:{
                 game_name: 'desc'
@@ -158,6 +164,11 @@ export async function updateGame(req, res) {
             data: {
                 game_name: updatedGame.game_name,
                 game_banner: updatedGame.game_banner,
+                games_info:{
+                    update:{
+                        game_fpage: updatedGame.games_info.game_fpage
+                    }
+                }
             }
         });
 
