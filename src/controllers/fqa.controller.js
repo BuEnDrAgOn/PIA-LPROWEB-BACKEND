@@ -2,7 +2,6 @@ import prisma from '../prisma.js'
 
 export const create = async(req, res) =>{
     const faq = req.body
-    console.log(faq)
     try{
         const fqa = await prisma.fqa.create({
              data: {
@@ -20,7 +19,11 @@ export const create = async(req, res) =>{
 
 export const index = async(req, res) => {
     try{
-        const fqa = await prisma.fqa.findMany()
+        const fqa = await prisma.fqa.findMany({
+            orderBy:{
+                created_at: 'desc'
+            }
+        })
         res.json(fqa)
     } catch(e){
         console.log(e)
