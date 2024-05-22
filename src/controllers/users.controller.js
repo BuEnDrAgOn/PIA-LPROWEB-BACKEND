@@ -84,7 +84,8 @@ export const updateUserScore = async (req, res) => {
                     }
                 },
                 data:{
-                    score: userScore.score
+                    score: userScore.score,
+                    updated_at: new Date()
                 }
             })
         } else{
