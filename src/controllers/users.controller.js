@@ -110,7 +110,8 @@ export const updateUserScore = async (req, res) => {
                     }
                 },
                 data:{
-                    score: userScore.score
+                    score: userScore.score,
+                    updated_at: new Date()
                 }
             })
         } else{
@@ -146,6 +147,61 @@ export const userGameScore = async (req, res) =>{
         res.json(scores)
         
     }catch(e){
+        console.log(e)
+    }
+}
+
+export const createUserQuestion = async (req, res) => {
+    const question = req.body
+
+    try{
+        const userQuestion = await prisma.user_question.create({
+            data:{
+                question_info: question.question_info,
+                user_id: question.user_id
+            }
+        })
+        res.json(userQuestion)
+    } catch(e) {
+        res.status(409).json({message: 'Error al crear pregunta'})
+    }
+}
+
+export const readUsersQuestions = async (req, res) => {
+    try{
+        const questions = await prisma.user_question.findMany({
+            orderBy:{
+                created_at: 'desc'
+            },
+            include:{
+                users: true
+            }
+        })
+        res.json(questions)
+    } catch(e){
+        console.log(e)
+    }
+}
+
+export const deleteUserQuestion = async (req, res) => {
+    const {question_id} = req.params
+    try{
+        await prisma.user_question.delete({
+            where:{
+                question_id: +question_id
+            }
+        })
+        res.json({message:'Se eliminó con éxito'})
+    } catch(e){
+        console.log(e);
+    }
+}
+
+export const deleteAllQuestions = async (req, res) => {
+    try{
+        await prisma.user_question.deleteMany()
+        res.json({message:'Se eliminó con éxito'})
+    } catch(e){
         console.log(e)
     }
 }
