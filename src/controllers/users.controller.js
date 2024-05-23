@@ -53,7 +53,33 @@ export const read = async(req, res) => {
 }
 
 export const update = async(req, res) => {
-    console.log('Hola')
+    const user = req.body
+
+    console.log(user);
+
+    try{
+        const userUpdated = await prisma.users.update({
+            where: {
+                user_email: user.user_email,
+                user_password: user.old_password
+            },
+            data: {
+                user_email: user.user_email,
+                user_name: user.user_name,
+                user_password: user.new_password
+            },
+        })
+        
+        
+        if (!userUpdated) {
+            res.status(404).json({message: 'Credenciales incorrectas'})
+        } else {
+            const token = jwt.sign({...logIn}, 'LabPwebPIA')
+            res.status(200).json(token)
+        }
+    } catch(e){
+        console.log(e);
+    }
 }
 
 export const deleteUser = async(req, res) => {

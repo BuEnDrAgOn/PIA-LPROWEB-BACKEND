@@ -5,7 +5,7 @@ const router = Router()
 
 router.post('/', create)
 router.post('/read/', read)
-router.put('/', update)
+router.patch('/', update)
 router.delete('/', deleteUser)
 
 router.patch('/user_score/', updateUserScore)
